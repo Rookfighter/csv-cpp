@@ -232,6 +232,90 @@ namespace csv
         rowLen_ = len;
     }
 
+    void CsvFile::decodeRowNo(const std::string &line, const size_t lineNo, CsvRow &row)
+    {
+        // init row vector with proposed capacity
+        row.clear();
+        row.reserve(rowLen_);
+
+        DecodeState state = BeginVal;
+        // string stream used to build values read from the file
+        std::stringstream ss;
+        for(size_t i = 0; i <= line.size(); ++i)
+        {
+            switch(state) {
+                // handle begin of a new value
+                case BeginVal:
+                    // check if value starts with escape character
+                    if(line[i] == esc_)
+                        state = EscVal;
+                    else
+                    {
+                        ss << line[i];
+                        state = StdVal;
+                    }
+                    break;
+                // handle escaped values (wrapped in escape char)
+                case EscVal:
+                    // found ending escape char
+                    if(line[i] == esc_)
+                    {
+                        if(i+1 < line.size() && line[i+1] != valueSep_)
+                        {
+                            std::stringstream es;
+                            es << "l" << lineNo
+                               << ": csv parsing failed, no separator or newline after escaped value";
+                            throw std::logic_error(es.str());
+                        }
+                        state = EndVal;
+                    }
+                    else if(line[i] == '\\')
+                    {
+                        // check if there is a following character
+                        if(i+1 == line.size())
+                        {
+                            std::stringstream es;
+                            es << "l" << lineNo
+                               << ": csv parsing failed, escape not finished";
+                            throw std::logic_error(es.str());
+                        }
+                        // increment i and consume char after escape
+                        ++i;
+                        char c = escChar(line[i], esc_);
+                        // check if c is a valid escape char
+                        if(c == '\0')
+                        {
+                            std::stringstream es;
+                            es << "l" << lineNo
+                               << ": csv parsing failed, invalid escape sequence \\"
+                               << line[i];
+                            throw std::logic_error(es.str());
+                        }
+
+                        ss << c;
+                    }
+                    else
+                        ss << line[i];
+                    break;
+                case StdVal:
+                    if(i+1 == line.size() || line[i+1] == valueSep_)
+                        state = EndVal;
+                    else
+                        ss << line[i];
+                    break;
+                case EndVal:
+                    row.push_back(ss.str());
+                    ss.str(std::string());
+                    break;
+            }
+        }
+    }
+
+    void CsvFile::decodeRow(const std::string &line, CsvRow &row)
+    {
+        decodeRowNo(line, 0, row);
+    }
+
     void CsvFile::decode(std::istream &is)
     {
         clear();
@@ -254,82 +338,8 @@ namespace csv
             if(line[0] == comment_)
                 continue;
 
-            // init row vector with proposed capacity
             CsvRow row;
-            row.reserve(rowLen_);
-
-            DecodeState state = BeginVal;
-            // string stream used to build values read from the file
-            std::stringstream ss;
-            for(size_t i = 0; i <= line.size(); ++i)
-            {
-                switch(state) {
-                    // handle begin of a new value
-                    case BeginVal:
-                        // check if value starts with escape character
-                        if(line[i] == esc_)
-                            state = EscVal;
-                        else
-                        {
-                            ss << line[i];
-                            state = StdVal;
-                        }
-                        break;
-                    // handle escaped values (wrapped in escape char)
-                    case EscVal:
-                        // found ending escape char
-                        if(line[i] == esc_)
-                        {
-                            if(i+1 < line.size() && line[i+1] != valueSep_)
-                            {
-                                std::stringstream es;
-                                es << "l" << lineNo
-                                   << ": csv parsing failed, no separator or newline after escaped value";
-                                throw std::logic_error(es.str());
-                            }
-                            state = EndVal;
-                        }
-                        else if(line[i] == '\\')
-                        {
-                            // check if there is a following character
-                            if(i+1 == line.size())
-                            {
-                                std::stringstream es;
-                                es << "l" << lineNo
-                                   << ": csv parsing failed, escape not finished";
-                                throw std::logic_error(es.str());
-                            }
-                            // increment i and consume char after escape
-                            ++i;
-                            char c = escChar(line[i], esc_);
-                            // check if c is a valid escape char
-                            if(c == '\0')
-                            {
-                                std::stringstream es;
-                                es << "l" << lineNo
-                                   << ": csv parsing failed, invalid escape sequence \\"
-                                   << line[i];
-                                throw std::logic_error(es.str());
-                            }
-
-                            ss << c;
-                        }
-                        else
-                            ss << line[i];
-                        break;
-                    case StdVal:
-                        if(i+1 == line.size() || line[i+1] == valueSep_)
-                            state = EndVal;
-                        else
-                            ss << line[i];
-                        break;
-                    case EndVal:
-                        row.push_back(ss.str());
-                        ss.str(std::string());
-                        break;
-                }
-            }
-
+            decodeRowNo(line, lineNo, row);
             push_back(row);
         }
     }

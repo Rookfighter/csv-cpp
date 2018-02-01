@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
+
 project(CsvCpp)
+SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_FLAGS "-Wall")
 
 set(LIB_NAME "csvcpp")
-set(CMAKE_CXX_FLAGS "-Wall")
 
 set(DEP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep")
 
@@ -12,9 +15,9 @@ add_library(${LIB_NAME} ${SRC})
 
 if(${BUILD_TEST})
     add_subdirectory("dep")
-    include_directories(${CATCH_INCLUDE_DIR})
-    set(TEST_NAME "TestIniFileCpp")
-    set(TEST_SRC "test/TestIniFile.cpp")
+    include_directories(${CATCH2_INCLUDE_DIR})
+    set(TEST_NAME "TestCSVCpp")
+    set(TEST_SRC "test/TestCSV.cpp")
     add_executable(${TEST_NAME} ${TEST_SRC})
     target_link_libraries(${TEST_NAME} ${LIB_NAME})
  endif(${BUILD_TEST})
