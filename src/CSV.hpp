@@ -53,15 +53,19 @@ namespace csv
         void decodeRowNo(const std::string &line, const size_t lineNo, CsvRow &row);
 
     public:
-        CsvFile(const char valueSep = ',', const char comment = '#');
-        CsvFile(const std::string &fileName, const char valueSep = ',',
-                const char comment = '#');
-        CsvFile(std::istream &is, const char valueSep = ',', const char comment = '#');
+        static char DefaultSep;
+        static char DefaultComment;
+        static char DefaultEsc;
+        static size_t DefaultRowLen;
+
+        CsvFile();
+        CsvFile(const std::string &fileName);
+        CsvFile(std::istream &is);
         ~CsvFile();
 
-        void setValueSep(const char sep);
-        void setCommentChar(const char comment);
-        void setProposedRowLen(const size_t len);
+        void setSep(const char sep);
+        void setComment(const char comment);
+        void setRowLen(const size_t len);
 
         void decodeRow(const std::string &line, CsvRow &row);
         void decode(std::istream &is);

@@ -195,20 +195,24 @@ namespace csv
      *          CsvFile
      ************************************/
 
-    CsvFile::CsvFile(const char valueSep, const char comment)
-        : valueSep_(valueSep), comment_(comment)
+    char CsvFile::DefaultSep = ',';
+    char CsvFile::DefaultComment = '#';
+    char CsvFile::DefaultEsc = '"';
+    size_t CsvFile::DefaultRowLen = 16;
+
+    CsvFile::CsvFile()
+        : valueSep_(DefaultSep), comment_(DefaultComment), esc_(DefaultEsc), rowLen_(DefaultRowLen)
     {
     }
 
-    CsvFile::CsvFile(const std::string &fileName, const char valueSep,
-                     const char comment)
-        : valueSep_(valueSep), comment_(comment)
+    CsvFile::CsvFile(const std::string &fileName)
+        : valueSep_(DefaultSep), comment_(DefaultComment), esc_(DefaultEsc), rowLen_(DefaultRowLen)
     {
         load(fileName);
     }
 
-    CsvFile::CsvFile(std::istream &is, const char valueSep, const char comment)
-        : valueSep_(valueSep), comment_(comment)
+    CsvFile::CsvFile(std::istream &is)
+        : valueSep_(DefaultSep), comment_(DefaultComment), esc_(DefaultEsc), rowLen_(DefaultRowLen)
     {
         decode(is);
     }
@@ -217,17 +221,17 @@ namespace csv
     {
     }
 
-    void CsvFile::setValueSep(const char sep)
+    void CsvFile::setSep(const char sep)
     {
         valueSep_ = sep;
     }
 
-    void CsvFile::setCommentChar(const char comment)
+    void CsvFile::setComment(const char comment)
     {
         comment_ = comment;
     }
 
-    void CsvFile::setProposedRowLen(const size_t len)
+    void CsvFile::setRowLen(const size_t len)
     {
         rowLen_ = len;
     }
