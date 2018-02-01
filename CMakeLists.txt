@@ -4,6 +4,8 @@ project(CsvCpp)
 set(LIB_NAME "csvcpp")
 set(CMAKE_CXX_FLAGS "-Wall")
 
+set(DEP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep")
+
 set(SRC "src/CSV.cpp")
 include_directories("src")
 add_library(${LIB_NAME} ${SRC})
