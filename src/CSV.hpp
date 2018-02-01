@@ -47,6 +47,8 @@ namespace csv
     private:
         char valueSep_;
         char comment_;
+        char esc_;
+        size_t rowLen_;
     public:
         CsvFile(const char valueSep = ',', const char comment = '#');
         CsvFile(const std::string &fileName, const char valueSep = ',',
@@ -56,6 +58,7 @@ namespace csv
 
         void setValueSep(const char sep);
         void setCommentChar(const char comment);
+        void setProposedRowLen(const size_t len);
 
         void decode(std::istream &is);
         void decode(const std::string &content);
