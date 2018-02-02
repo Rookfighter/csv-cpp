@@ -9,12 +9,13 @@
 #define CATCH_CONFIG_MAIN
 
 #include <catch.hpp>
+#include <iostream>
 #include "CSV.hpp"
 
 TEST_CASE("parse csv file", "CsvFile")
 {
-    std::istringstream ss("foo,true,1.0\nbar,false,200,\"Hello, World!\"");
-    csv::CsvFile csvf(ss);
+    csv::CsvFile csvf;
+    csvf.decode("foo,true,1.0\nbar,false,200,\"Hello, World!\"");
 
     REQUIRE(csvf.size() == 2);
 
@@ -28,4 +29,37 @@ TEST_CASE("parse csv file", "CsvFile")
     REQUIRE(csvf[1][1].asBool() == false);
     REQUIRE(csvf[1][2].asInt() == 200);
     REQUIRE(csvf[1][3].asString() == "Hello, World!");
+}
+
+TEST_CASE("parse row", "CsvFile")
+{
+    std::string str = "foo,true,1.0,10";
+    csv::CsvFile csvf;
+    csv::CsvRow row;
+
+    csvf.decodeRow(str, row);
+
+    REQUIRE(row.size() == 4);
+
+    REQUIRE(row[0].asString() == "foo");
+    REQUIRE(row[1].asBool() == true);
+    REQUIRE(row[2].asDouble() == 1.0);
+    REQUIRE(row[3].asInt() == 10);
+}
+
+TEST_CASE("parse row escaped", "CsvFile")
+{
+    std::string str = "\"foo\",\"true\",1.0,\"10\",\"Hello, World\\t!\"";
+    csv::CsvFile csvf;
+    csv::CsvRow row;
+
+    csvf.decodeRow(str, row);
+
+    REQUIRE(row.size() == 5);
+
+    REQUIRE(row[0].asString() == "foo");
+    REQUIRE(row[1].asBool() == true);
+    REQUIRE(row[2].asDouble() == 1.0);
+    REQUIRE(row[3].asInt() == 10);
+    REQUIRE(row[4].asString() == "Hello, World\t!");
 }

@@ -12,7 +12,6 @@
 #include <sstream>
 #include <stdexcept>
 #include <fstream>
-#include <iostream>
 
 #define TO_UPPER(str) std::transform(str.begin(), str.end(),str.begin(), ::toupper)
 
@@ -206,13 +205,13 @@ namespace csv
     }
 
     CsvFile::CsvFile(const std::string &fileName)
-        : valueSep_(DefaultSep), comment_(DefaultComment), esc_(DefaultEsc), rowLen_(DefaultRowLen)
+        : CsvFile()
     {
         load(fileName);
     }
 
     CsvFile::CsvFile(std::istream &is)
-        : valueSep_(DefaultSep), comment_(DefaultComment), esc_(DefaultEsc), rowLen_(DefaultRowLen)
+        : CsvFile()
     {
         decode(is);
     }
@@ -302,14 +301,14 @@ namespace csv
                         ss << line[i];
                     break;
                 case StdVal:
+                    ss << line[i];
                     if(i+1 == line.size() || line[i+1] == valueSep_)
                         state = EndVal;
-                    else
-                        ss << line[i];
                     break;
                 case EndVal:
-                    row.push_back(ss.str());
-                    ss.str(std::string());
+                    row.push_back(CsvValue(ss.str()));
+                    ss.str(std::string()); // = std::stringstream();
+                    state = BeginVal;
                     break;
             }
         }
@@ -322,16 +321,23 @@ namespace csv
 
     void CsvFile::decode(std::istream &is)
     {
-        clear();
         // count lines of file to preinit vector
         size_t lineCount = std::count(std::istreambuf_iterator<char>(is),
-             std::istreambuf_iterator<char>(), '\n');
+             std::istreambuf_iterator<char>(), '\n') + 1;
+
+        // reset istream
+        is.clear();
+        is.seekg(0, std::ios::beg);
+
+        // clear vector and reserve enough space
+        clear();
         reserve(lineCount);
 
         // iterate through all lines
         size_t lineNo = 0;
+        std::string line;
+
         while(!is.eof() && !is.fail()) {
-            std::string line;
             std::getline(is, line, '\n');
             ++lineNo;
 
