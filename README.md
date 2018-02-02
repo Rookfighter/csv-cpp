@@ -74,10 +74,8 @@ int main()
 
 	csv::CsvFile myCsv;
 
-	myCsv["Foo"]["myInt"] = 1;
-	myCsv["Foo"]["myStr"] = "Hello world";
-	myCsv["Foo"]["myBool"] = true;
-	myCsv["Bar"]["myDouble"] = 1.2;
+	myCsv.push_back({1, "Hello world", true, 1.2});
+	myCsv.push_back({"Foobar", 2.1f, -2});
 
 	myCsv.encode(os);
 }
