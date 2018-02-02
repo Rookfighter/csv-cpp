@@ -64,6 +64,21 @@ TEST_CASE("parse row escaped", "CsvFile")
     REQUIRE(row[4].asString() == "Hello, World\t!");
 }
 
+TEST_CASE("parse row single char values", "CsvFile")
+{
+    std::string str = "1,2,\"3\"";
+    csv::CsvFile csvf;
+    csv::CsvRow row;
+
+    csvf.decodeRow(str, row);
+
+    REQUIRE(row.size() == 3);
+
+    REQUIRE(row[0].asInt() == 1);
+    REQUIRE(row[1].asInt() == 2);
+    REQUIRE(row[2].asInt() == 3);
+}
+
 TEST_CASE("add values", "CsvFile")
 {
     csv::CsvFile csvf;
