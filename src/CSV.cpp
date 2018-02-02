@@ -283,7 +283,8 @@ namespace csv
         DecodeState state = BeginVal;
         // string stream used to build values read from the file
         std::stringstream ss;
-        for(size_t i = 0; i <= line.size(); ++i) {
+        size_t i = 0;
+        while(i <= line.size()) {
             switch(state) {
             // handle begin of a new value
             case BeginVal:
@@ -291,8 +292,8 @@ namespace csv
                 if(line[i] == esc_)
                     state = EscVal;
                 else {
-                    ss << line[i];
                     state = StdVal;
+                    continue;
                 }
                 break;
             // handle escaped values (wrapped in escape char)
@@ -341,6 +342,7 @@ namespace csv
                 state = BeginVal;
                 break;
             }
+            ++i;
         }
     }
 
