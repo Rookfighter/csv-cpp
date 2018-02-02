@@ -20,7 +20,13 @@ namespace csv
         std::string value_;
     public:
         CsvValue();
+        CsvValue(const int value);
+        CsvValue(const unsigned int value);
+        CsvValue(const double value);
+        CsvValue(const float value);
+        CsvValue(const bool value);
         CsvValue(const std::string &value);
+        CsvValue(const char *value);
         CsvValue(const CsvValue &csvVal);
         ~CsvValue();
 
@@ -38,6 +44,7 @@ namespace csv
         CsvValue &operator=(const float value);
         CsvValue &operator=(const bool value);
         CsvValue &operator=(const std::string &value);
+        CsvValue &operator=(const char *value);
     };
 
     typedef std::vector<CsvValue> CsvRow;

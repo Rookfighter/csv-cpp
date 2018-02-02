@@ -92,7 +92,38 @@ namespace csv
     {
     }
 
+    CsvValue::CsvValue(const int value)
+    {
+        *this = value;
+    }
+
+    CsvValue::CsvValue(const unsigned int value)
+    {
+        *this = value;
+    }
+
+    CsvValue::CsvValue(const double value)
+    {
+        *this = value;
+    }
+
+    CsvValue::CsvValue(const float value)
+    {
+        *this = value;
+    }
+
+    CsvValue::CsvValue(const bool value)
+    {
+        *this = value;
+    }
+
     CsvValue::CsvValue(const std::string &value)
+        : value_(value)
+    {
+
+    }
+
+    CsvValue::CsvValue(const char *value)
         : value_(value)
     {
 
@@ -187,6 +218,12 @@ namespace csv
     CsvValue &CsvValue::operator=(const std::string &value)
     {
         value_ = value;
+        return *this;
+    }
+
+    CsvValue &CsvValue::operator=(const char *value)
+    {
+        value_ = std::string(value);
         return *this;
     }
 
@@ -368,7 +405,7 @@ namespace csv
 
     void CsvFile::encode(std::ostream &os)
     {
-
+        throw std::logic_error("Not yet implemented");
     }
 
     std::string CsvFile::encode()
