@@ -15,5 +15,8 @@ before_install:
 install:
 
 script:
-    - mkdir build && cd build && cmake -DBUILD_TEST=true .. && make
+    - mkdir build
+    - cd build
+    - cmake -DBUILD_TEST=true ..
+    - make
     - ./TestCSVCpp
