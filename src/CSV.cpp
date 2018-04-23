@@ -54,29 +54,6 @@ namespace csv
         return result;
     }
 
-    static char escChar(const char c, const char esc)
-    {
-        if(c == esc)
-            return esc;
-
-        switch(c) {
-        case 'v':
-            return '\v';
-        case 't':
-            return '\t';
-        case 'r':
-            return '\r';
-        case 'n':
-            return '\n';
-        case 'f':
-            return '\f';
-        case '\\':
-            return '\\';
-        default:
-            return '\0';
-        }
-    }
-
     enum DecodeState {
         BeginVal = 0,
         EscVal,
@@ -273,6 +250,29 @@ namespace csv
         rowLen_ = len;
     }
 
+    char CsvFile::esc2char(const char c) const
+    {
+        if(c == esc_)
+            return esc_;
+
+        switch(c) {
+        case 'v':
+            return '\v';
+        case 't':
+            return '\t';
+        case 'r':
+            return '\r';
+        case 'n':
+            return '\n';
+        case 'f':
+            return '\f';
+        case '\\':
+            return '\\';
+        default:
+            return '\0';
+        }
+    }
+
     void CsvFile::decodeRowNo(const std::string &line, const size_t lineNo,
                               CsvRow &row)
     {
@@ -317,7 +317,7 @@ namespace csv
                     }
                     // increment i and consume char after escape
                     ++i;
-                    char c = escChar(line[i], esc_);
+                    char c = esc2char(line[i]);
                     // check if c is a valid escape char
                     if(c == '\0') {
                         std::stringstream es;
@@ -398,9 +398,69 @@ namespace csv
         decode(is);
     }
 
+    char CsvFile::char2esc(const char c) const
+    {
+        if(c == esc_)
+            return esc_;
+
+        switch(c) {
+        case '\v':
+            return 'v';
+        case '\t':
+            return 't';
+        case '\r':
+            return 'r';
+        case '\n':
+            return 'n';
+        case '\f':
+            return 'f';
+        case '\\':
+            return '\\';
+        default:
+            return '\0';
+        }
+    }
+
     void CsvFile::encode(std::ostream &os)
     {
-        throw std::logic_error("Not yet implemented");
+        for(const CsvRow &row: *this)
+        {
+            for(const CsvValue &val: row)
+            {
+                bool isEsc = false;
+                std::stringstream ssVal;
+                for(char c: val.asString())
+                {
+                    char esc = char2esc(c);
+                    if(esc != '\0')
+                    {
+                        isEsc = true;
+                        ssVal << '\\' << esc;
+                    }
+                    else
+                    {
+                        if(c == valueSep_)
+                            isEsc = true;
+                        ssVal << c;
+                    }
+                }
+
+                if(isEsc)
+                    os << esc_;
+
+                os << ssVal.str();
+
+                if(isEsc)
+                    os << esc_;
+
+                os << valueSep_;
+            }
+
+            long pos = os.tellp();
+            os.seekp(pos - 1);
+
+            os << '\n';
+        }
     }
 
     std::string CsvFile::encode()

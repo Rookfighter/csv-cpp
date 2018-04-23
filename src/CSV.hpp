@@ -57,6 +57,8 @@ namespace csv
         char esc_;
         size_t rowLen_;
 
+        char esc2char(const char c) const;
+        char char2esc(const char c) const;
         void decodeRowNo(const std::string &line, const size_t lineNo, CsvRow &row);
 
     public:

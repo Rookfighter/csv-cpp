@@ -99,3 +99,25 @@ TEST_CASE("add values", "CsvFile")
     REQUIRE(csvf[1][2].asInt() == 200);
     REQUIRE(csvf[1][3].asFloat() == 2.1f);
 }
+
+TEST_CASE("encode without escape", "CsvFile")
+{
+    csv::CsvFile csvf;
+    std::string s1 = "foo,true,1\nbar,false,200,2.1\n";
+
+    csvf.push_back({"foo", true, 1.0});
+    csvf.push_back({"bar", false, 200, 2.1f});
+
+    REQUIRE(csvf.encode() == s1);
+}
+
+TEST_CASE("encode with escape", "CsvFile")
+{
+    csv::CsvFile csvf;
+    std::string s1 = "\"f,oo\",\"tr\\tu\\\"e\",1\n\"b\\nar\",false,200,2.1\n";
+
+    csvf.push_back({"f,oo", "tr\tu\"e", 1.0});
+    csvf.push_back({"b\nar", false, 200, 2.1f});
+
+    REQUIRE(csvf.encode() == s1);
+}
