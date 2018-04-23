@@ -16,4 +16,4 @@ install:
 
 script:
     - mkdir build && cd build && cmake -DBUILD_TEST=true .. && make
-    - ./build/TestCSVCpp
+    - ./TestCSVCpp
