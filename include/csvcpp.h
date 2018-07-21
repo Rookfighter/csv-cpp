@@ -9,12 +9,12 @@
 #ifndef CSVCPP_H_
 #define CSVCPP_H_
 
-#include <string>
-#include <vector>
 #include <algorithm>
+#include <fstream>
 #include <sstream>
 #include <stdexcept>
-#include <fstream>
+#include <string>
+#include <vector>
 
 namespace csv
 {
@@ -22,49 +22,41 @@ namespace csv
     {
     private:
         std::string value_;
+
     public:
-        CsvValue()
-            : value_()
+        CsvValue() : value_()
         {}
 
-        CsvValue(const CsvValue &csvVal)
-            : value_(csvVal.value_)
+        CsvValue(const CsvValue &csvVal) : value_(csvVal.value_)
         {}
 
-        CsvValue(const std::string &value)
-            : value_(value)
+        CsvValue(const std::string &value) : value_(value)
         {}
 
-        CsvValue(const char *value)
-            : value_(value)
+        CsvValue(const char *value) : value_(value)
         {}
 
-        CsvValue(const int value)
-            : CsvValue()
+        CsvValue(const int value) : CsvValue()
         {
             *this = value;
         }
 
-        CsvValue(const unsigned int value)
-            : CsvValue()
+        CsvValue(const unsigned int value) : CsvValue()
         {
             *this = value;
         }
 
-        CsvValue(const double value)
-            : CsvValue()
+        CsvValue(const double value) : CsvValue()
         {
             *this = value;
         }
 
-        CsvValue(const float value)
-            : CsvValue()
+        CsvValue(const float value) : CsvValue()
         {
             *this = value;
         }
 
-        CsvValue(const bool value)
-            : CsvValue()
+        CsvValue(const bool value) : CsvValue()
         {
             *this = value;
         }
@@ -295,7 +287,8 @@ namespace csv
          *  @param line the line string to be parsed
          *  @lineNo the line number within the file
          *  @row output row */
-        void decodeRowNo(const std::string &line, const size_t lineNo, CsvRow &row)
+        void decodeRowNo(
+            const std::string &line, const size_t lineNo, CsvRow &row)
         {
             // init row vector with proposed capacity
             row.clear();
@@ -329,7 +322,8 @@ namespace csv
                         {
                             std::stringstream es;
                             es << "l" << lineNo
-                               << ": csv parsing failed, no separator or newline after escaped value";
+                               << ": csv parsing failed, no separator or "
+                                  "newline after escaped value";
                             throw std::logic_error(es.str());
                         }
                         state = EndVal;
@@ -352,7 +346,8 @@ namespace csv
                         {
                             std::stringstream es;
                             es << "l" << lineNo
-                               << ": csv parsing failed, invalid escape sequence \\"
+                               << ": csv parsing failed, invalid escape "
+                                  "sequence \\"
                                << line[i];
                             throw std::logic_error(es.str());
                         }
@@ -378,22 +373,20 @@ namespace csv
         }
 
     public:
-        CsvFile()
-            : valueSep_(','), comment_('#'), esc_('"'), rowLen_(128)
+        CsvFile() : valueSep_(','), comment_('#'), esc_('"'), rowLen_(128)
         {}
 
-        CsvFile(const char valueSep, const char comment = '#', const char esc = '"')
+        CsvFile(
+            const char valueSep, const char comment = '#', const char esc = '"')
             : valueSep_(valueSep), comment_(comment), esc_(esc), rowLen_(128)
         {}
 
-        CsvFile(const std::string &fileName)
-            : CsvFile()
+        CsvFile(const std::string &fileName) : CsvFile()
         {
             load(fileName);
         }
 
-        CsvFile(std::istream &is)
-            : CsvFile()
+        CsvFile(std::istream &is) : CsvFile()
         {
             decode(is);
         }
@@ -425,7 +418,9 @@ namespace csv
         {
             // count lines of file to preinit vector
             size_t lineCount = std::count(std::istreambuf_iterator<char>(is),
-                                          std::istreambuf_iterator<char>(), '\n') + 1;
+                                   std::istreambuf_iterator<char>(),
+                                   '\n') +
+                               1;
 
             // reset istream
             is.clear();
@@ -525,6 +520,5 @@ namespace csv
         }
     };
 }
-
 
 #endif

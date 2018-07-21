@@ -6,8 +6,8 @@
  *    License: MIT
  */
 
-#include <catch.hpp>
 #include "csvcpp.h"
+#include <catch.hpp>
 
 TEST_CASE("parse csv file", "CsvFile")
 {
@@ -91,7 +91,7 @@ TEST_CASE("add values", "CsvFile")
     REQUIRE(csvf[0][2].as<double>() == 1.0);
 
     REQUIRE(csvf[1].size() == 4);
-    //REQUIRE(csvf[1][0].asString() == "bar");
+    // REQUIRE(csvf[1][0].asString() == "bar");
     REQUIRE(csvf[1][1].as<bool>() == false);
     REQUIRE(csvf[1][2].as<int>() == 200);
     REQUIRE(csvf[1][3].as<float>() == 2.1f);
