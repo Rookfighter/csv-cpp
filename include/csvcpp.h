@@ -500,7 +500,7 @@ namespace csv
                     os << valueSep_;
                 }
 
-                size_t pos = os.tellp();
+                std::streamoff pos = os.tellp();
                 os.seekp(pos - 1);
 
                 os << '\n';
