@@ -9,7 +9,7 @@ before_build:
     - cmake .
 
 build:
-    project: $(APPVEYOR_BUILD_FOLDER)\inifile-cpp.sln
+    project: $(APPVEYOR_BUILD_FOLDER)\csv-cpp.sln
 
 test_script:
     - '%APPVEYOR_BUILD_FOLDER%\Debug\run_tests.exe'

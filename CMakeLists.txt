@@ -1,23 +1,24 @@
+# CMakeLists.txt
+#
+#     Author: Fabian Meyer
+# Created On: 01 Feb 2018
+#    License: MIT
+
 cmake_minimum_required(VERSION 3.5)
 
-project(CsvCpp)
+project(csv-cpp)
 SET(CMAKE_CXX_STANDARD 11)
 SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "-Wall")
 
-set(LIB_NAME "csvcpp")
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+endif(CMAKE_COMPILER_IS_GNUCXX)
 
-set(DEP_DIR "${CMAKE_CURRENT_LIST_DIR}/dep")
+add_subdirectory("dep")
+include_directories(
+    include
+    ${CATCH2_INCLUDE_DIR}
+)
 
-set(SRC "src/CSV.cpp")
-include_directories("src")
-add_library(${LIB_NAME} ${SRC})
-
-if(${BUILD_TEST})
-    add_subdirectory("dep")
-    include_directories(${CATCH2_INCLUDE_DIR})
-    set(TEST_NAME "TestCSVCpp")
-    set(TEST_SRC "test/TestCSV.cpp")
-    add_executable(${TEST_NAME} ${TEST_SRC})
-    target_link_libraries(${TEST_NAME} ${LIB_NAME})
- endif(${BUILD_TEST})
+set(TEST_SRC "test/main.cpp" "test/test_csvfile.cpp")
+add_executable(run_tests ${TEST_SRC})
