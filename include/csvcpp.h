@@ -379,11 +379,11 @@ namespace csv
 
     public:
         CsvFile()
-            : valueSep_(','), comment_('#'), esc_('"'), rowLen_(16)
+            : valueSep_(','), comment_('#'), esc_('"'), rowLen_(128)
         {}
 
         CsvFile(const char valueSep, const char comment = '#', const char esc = '"')
-            : valueSep_(valueSep), comment_(comment), esc_(esc), rowLen_(16)
+            : valueSep_(valueSep), comment_(comment), esc_(esc), rowLen_(128)
         {}
 
         CsvFile(const std::string &fileName)
@@ -411,7 +411,7 @@ namespace csv
             comment_ = comment;
         }
 
-        void setRowLength(const size_t len)
+        void proposeRowLength(const size_t len)
         {
             rowLen_ = len;
         }
