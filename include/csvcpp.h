@@ -417,10 +417,11 @@ namespace csv
         void decode(std::istream &is)
         {
             // count lines of file to preinit vector
-            size_t lineCount = std::count(std::istreambuf_iterator<char>(is),
-                                   std::istreambuf_iterator<char>(),
-                                   '\n') +
-                               1;
+            size_t lineCount = static_cast<size_t>(std::count(
+                std::istreambuf_iterator<char>(is),
+                std::istreambuf_iterator<char>(),
+                '\n')
+                + 1);
 
             // reset istream
             is.clear();
@@ -499,7 +500,7 @@ namespace csv
                     os << valueSep_;
                 }
 
-                long pos = os.tellp();
+                size_t pos = os.tellp();
                 os.seekp(pos - 1);
 
                 os << '\n';
