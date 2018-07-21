@@ -1,5 +1,6 @@
 # CSV-cpp
 ![](https://travis-ci.org/Rookfighter/csv-cpp.svg?branch=master)
+![](https://ci.appveyor.com/api/projects/status/o55jm3mjodtat75g?svg=true)
 
 CSV-cpp is a simple and easy to use, header-only comma separated values (CSV) en- and decoder for C++.
 
