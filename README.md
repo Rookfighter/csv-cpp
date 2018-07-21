@@ -1,28 +1,30 @@
-# CSV Cpp ![](https://travis-ci.org/Rookfighter/csv-cpp.svg?branch=master)
+# CSV-cpp
+![](https://travis-ci.org/Rookfighter/csv-cpp.svg?branch=master)
 
-CSV Cpp is a simple and easy to use comma separated values (CSV) en- and decoder for C++.
+CSV-cpp is a simple and easy to use, header-only comma separated values (CSV) en- and decoder for C++.
 
 ## Install
 
-You can either build a static library using the CMake building system by running
+Install the headers using the CMake build system:
 
 ```sh
 cd <path-to-repo>
+git submodule update --init --recursive
 mkdir build
 cd build
 cmake ..
-make
+make install
 ```
 
-or simply copy the source files into your project and compile them directly.
+or simply copy the header file into your project and include it directly.
 
 ## Usage
 
-CSV Cpp allows loading data from any ```std::istream```. Simply call
+CSV-cpp allows loading data from any ```std::istream```. Simply call
 the ```decode()``` method or use the overloaded constructor.
 
 ```cpp
-#include <CSV.hpp>
+#include <csvcpp.h>
 
 int main()
 {
@@ -45,28 +47,33 @@ operator ```[]```. The extracted value can be converted to various native
 types.
 
 ```cpp
-bool myBool = myCsv[0][0].asBool();
-std::string myStr = myCsv[0][1].asString();
-int myInt = myCsv[0][2].asInt();
-unsigned int myUInt = myCsv[0][3].asUInt();
-double myDouble = myCsv[0][4].asDouble();
-float myFloat = myCsv[0][5].asFloat();
+bool myBool = myCsv[0][0].as<bool>();
+std::string myStr = myCsv[0][1].as<std::string>();
+const char *myCStr = myCsv[0][2].as<const char *>();
+int myInt = myCsv[0][3].as<int>();
+unsigned int myUInt = myCsv[0][4].as<unsigned int>();
+double myDouble = myCsv[0][5].as<double>();
+float myFloat = myCsv[0][6].as<float>();
 ```
 
-To create a CSV file with CSV Cpp add rows and values. Supported types are:
+Natively supported types are:
 
-* bool
-* std::string
-* int
-* unsigend int
-* double
-* float
+* ```const char *```
+* ```std::string```
+* ```int```
+* ```unsigned int```
+* ```bool```
+* ```float```
+* ```double```
 
-The content of the CSV file can then be written to any std::ostream object
-using the ```encode()``` method.
+Custom type conversions can be added by implementing a explicit cast operator
+for ```CsvValue```.
+
+Values can be assigned to csv values just by using the assignment operator.
+The content of the csv file can then be written to any ```std::ostream``` object.
 
 ```cpp
-#include <CSV.hpp>
+#include <csvcpp.h>
 
 int main()
 {
